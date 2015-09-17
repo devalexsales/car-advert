@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 
-class CarAdvertDaoITSpec  extends Specification with Mockito {
+class CarAdvertDaoITSpec  extends Specification {
   val log = LoggerFactory.getLogger(this.getClass)
 
   val dao: CarAdvertDao = new CarAdvertDaoImpl()
@@ -51,10 +51,6 @@ class CarAdvertDaoITSpec  extends Specification with Mockito {
         case _ => failure
       }
     }
-
-//    "delete a car advert by id" in {
-//
-//    }
 
   }
 

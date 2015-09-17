@@ -6,7 +6,7 @@ import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import awscala._, dynamodbv2._
 
-class DynamoDBITSpec extends Specification with Mockito {
+class DynamoDBITSpec extends Specification {
   val log = LoggerFactory.getLogger(this.getClass)
 
   implicit val dynamoDB = DynamoDB.local()

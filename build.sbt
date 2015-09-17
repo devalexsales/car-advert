@@ -19,5 +19,6 @@ libraryDependencies ++= Seq(
   "org.scalatestplus" %% "play" % "1.1.0" % "test"
 )
 
+routesGenerator := InjectedRoutesGenerator
 
 fork in run := true
