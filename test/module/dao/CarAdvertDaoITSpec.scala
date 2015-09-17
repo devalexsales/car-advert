@@ -18,7 +18,7 @@ class CarAdvertDaoITSpec  extends Specification with Mockito {
       val id: String = UUID.randomUUID().toString
 
       //create a car advert
-      dao.create(CarAdvert(
+      dao.save(CarAdvert(
         id,
         title = "test",
         fuel = "gasoline",
@@ -28,28 +28,30 @@ class CarAdvertDaoITSpec  extends Specification with Mockito {
         firstRegistration = None))
 
       //find by id
-      val carAdvert: CarAdvert = dao.findById(id).get
+      var carAdvert: CarAdvert = dao.findById(id).get
       log.info(carAdvert.toString)
       carAdvert.guid === id
+      carAdvert.fuel === "gasoline"
 
       //find all
       val carAdverts: List[CarAdvert] = dao.findAll()
       log.info(carAdverts.toString)
       carAdverts.size must_!=(0)
+
+      //update a car advert by id
+      val isUpdated = dao.update(carAdvert.copy(fuel = "diesel"))
+      isUpdated === true
+      carAdvert = dao.findById(id).get
+      carAdvert.fuel === "diesel"
+
+      val isDeleted = dao.deleteBy(id, carAdvert.title)
+      isDeleted === true
+      dao.findById(id) match {
+        case None => success
+        case _ => failure
+      }
     }
 
-//    "find all cars" in {
-//
-//    }
-//
-//    "find car by id" in {
-//
-//    }
-//
-//    "update a car advert by id" in {
-//
-//    }
-//
 //    "delete a car advert by id" in {
 //
 //    }

@@ -7,11 +7,15 @@ import models.CarAdvert
 
 @ImplementedBy(classOf[CarAdvertDaoImpl])
 trait CarAdvertDao {
+  def deleteBy(id: String, title: String): Boolean
+
+  def update(carAdvert: CarAdvert): Boolean
+
   def findAll(): List[CarAdvert]
 
   def findById(id: String): Option[CarAdvert]
 
-  def create(carAdvert: CarAdvert): Unit
+  def save(carAdvert: CarAdvert): Unit
 
 }
 
@@ -35,22 +39,14 @@ class CarAdvertDaoImpl extends CarAdvertDao {
     )
   }
 
-  override def create(carAdvert: CarAdvert): Unit = {
+  override def save(carAdvert: CarAdvert): Unit = {
     dynamoDb.table(CAR_ADVERTS) match {
       case Some(table) => {
-          table.put(
-            hashPK = carAdvert.guid,
-            rangePK = carAdvert.title,
-            "fuel" -> carAdvert.fuel,
-            "price" -> carAdvert.price,
-            "new" -> (if (carAdvert.isNew) 1 else 0),
-            "mileage" -> carAdvert.mileage,
-            "firstRegistration" -> (if (carAdvert.isNew) -1 else carAdvert.firstRegistration.get.getTime)
-          )
+          saveOrUpdate(carAdvert, table)
       }
       case None => {
         createTable()
-        create(carAdvert)
+        save(carAdvert)
       }
     }
   }
@@ -59,10 +55,10 @@ class CarAdvertDaoImpl extends CarAdvertDao {
     dynamoDb.table(CAR_ADVERTS) match {
       case Some(table) => {
         table.query(Seq("guid" -> cond.eq(id))) match {
+          case Nil => None
           case items => {
             Some(CarAdvert.toObject(items(0)))
           }
-          case Nil => None
         }
       }
       case None => {
@@ -86,4 +82,43 @@ class CarAdvertDaoImpl extends CarAdvertDao {
       }
     }
   }
+
+  override def update(carAdvert: CarAdvert): Boolean = {
+    dynamoDb.table(CAR_ADVERTS) match {
+      case Some(table) => {
+        findById(carAdvert.guid) match {
+          case item => saveOrUpdate(carAdvert, table); true
+          case None => false
+        }
+      }
+      case None => {
+        createTable()
+        update(carAdvert)
+      }
+    }
+  }
+
+  override def deleteBy(id: String, title: String): Boolean = {
+    dynamoDb.table(CAR_ADVERTS) match {
+      case Some(table) => table.delete(id, title); true
+      case None => {
+        createTable()
+        deleteBy(id, title)
+      }
+    }
+  }
+
+  private def saveOrUpdate(carAdvert: CarAdvert, table: Table): Unit = {
+    table.put(
+      hashPK = carAdvert.guid,
+      rangePK = carAdvert.title,
+      "fuel" -> carAdvert.fuel,
+      "price" -> carAdvert.price,
+      "new" -> (if (carAdvert.isNew) 1 else 0),
+      "mileage" -> carAdvert.mileage,
+      "firstRegistration" -> (if (carAdvert.isNew) -1 else carAdvert.firstRegistration.get.getTime)
+    )
+  }
+
+
 }
