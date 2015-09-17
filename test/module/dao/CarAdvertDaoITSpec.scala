@@ -2,19 +2,24 @@ package module.dao
 
 import java.util.UUID
 
-import models.CarAdvert.CarAdvert
+import models.CarAdvert
+import org.slf4j.LoggerFactory
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 
 class CarAdvertDaoITSpec  extends Specification with Mockito {
+  val log = LoggerFactory.getLogger(this.getClass)
 
   val dao: CarAdvertDao = new CarAdvertDaoImpl()
 
   "CarAdvertDao" should {
 
-    "create a car advert" in {
+    "a car advert integration tests" in {
+      val id: String = UUID.randomUUID().toString
+
+      //create a car advert
       dao.create(CarAdvert(
-        UUID.randomUUID().toString,
+        id,
         title = "test",
         fuel = "gasoline",
         price = 10,
@@ -22,7 +27,15 @@ class CarAdvertDaoITSpec  extends Specification with Mockito {
         mileage = -1,
         firstRegistration = new java.util.Date))
 
-      1 + 1 === 2
+      //find all
+      val carAdverts: List[CarAdvert] = dao.findAll()
+      log.info(carAdverts.toString)
+      carAdverts.size must_!=(0)
+
+      //find by id
+      val carAdvert: CarAdvert = dao.findById(id).get
+      log.info(carAdvert.toString)
+      carAdvert.guid === id
     }
 
 //    "find all cars" in {

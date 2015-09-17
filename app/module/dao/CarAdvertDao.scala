@@ -1,12 +1,16 @@
 package module.dao
 
-import awscala._, dynamodbv2._
-import com.google.inject.{Inject, ImplementedBy}
-import models.CarAdvert.CarAdvert
+import awscala.dynamodbv2._
+import com.google.inject.ImplementedBy
+import models.CarAdvert
 
 
 @ImplementedBy(classOf[CarAdvertDaoImpl])
 trait CarAdvertDao {
+  def findAll(): List[CarAdvert]
+
+  def findById(id: String): Option[CarAdvert]
+
   def create(carAdvert: CarAdvert): Unit
 
 }
@@ -52,4 +56,23 @@ class CarAdvertDaoImpl extends CarAdvertDao {
       }
     }
   }
+
+  override def findById(id: String): Option[CarAdvert] = {
+    dynamoDb.table("car-adverts") match {
+      case Some(table) => {
+        table. match {
+          case item :: Nil => {
+            Some(CarAdvert.toObject(item))
+          }
+          case Nil => None
+        }
+      }
+      case None => {
+        createTable()
+        findById(id)
+      }
+    }
+  }
+
+  override def findAll(): List[CarAdvert] = ???
 }
