@@ -25,17 +25,17 @@ class CarAdvertDaoITSpec  extends Specification with Mockito {
         price = 10,
         isNew = true,
         mileage = -1,
-        firstRegistration = new java.util.Date))
-
-      //find all
-      val carAdverts: List[CarAdvert] = dao.findAll()
-      log.info(carAdverts.toString)
-      carAdverts.size must_!=(0)
+        firstRegistration = None))
 
       //find by id
       val carAdvert: CarAdvert = dao.findById(id).get
       log.info(carAdvert.toString)
       carAdvert.guid === id
+
+      //find all
+      val carAdverts: List[CarAdvert] = dao.findAll()
+      log.info(carAdverts.toString)
+      carAdverts.size must_!=(0)
     }
 
 //    "find all cars" in {

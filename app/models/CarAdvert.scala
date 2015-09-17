@@ -18,7 +18,7 @@ object CarAdvert {
       map.get("price").get.getN.toInt,
       if (map.get("new").get.getN.toInt == 1) true else false,
       map.get("mileage").get.getN.toInt,
-      new Date(map.get("firstRegistration").get.getN.toLong)
+      Some(new Date(map.get("firstRegistration").get.getN.toLong))
     )
   }
 }
@@ -30,5 +30,5 @@ case class CarAdvert(
                       price: Int,
                       isNew: Boolean,
                       mileage: Int,
-                      firstRegistration: java.util.Date
+                      firstRegistration: Option[java.util.Date]
                       )
