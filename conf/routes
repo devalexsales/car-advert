@@ -8,6 +8,7 @@ POST        /books               controllers.Application.saveBook
 
 # Car Adverts
 GET         /carAdverts          controllers.Application.listCarAdverts
+GET         /carAdverts/:id      controllers.Application.getCarAdvertById(id: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file        controllers.Assets.versioned(path="/public", file)

@@ -12,6 +12,13 @@ class Application @Inject() (carAdvertDao: CarAdvertDao) extends Controller {
     Ok(Json.toJson(carAdvertDao.findAll()))
   }
 
+  def getCarAdvertById(id: String) = Action {
+    carAdvertDao.findById(id) match {
+      case item => Ok(Json.toJson(item))
+      case None => NotFound
+    }
+  }
+
   def listBooks = Action {
     Ok(Json.toJson(books))
   }
