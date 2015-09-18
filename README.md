@@ -2,6 +2,7 @@
 
 ## Tech Stack
 
+- Scala 2.11
 - Play 2.4
 - AWS Dynamo DB
 
