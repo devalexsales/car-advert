@@ -92,7 +92,7 @@ firstRegistration
     returns `{"status":"<OK or KO>","message":"<info>"}`
 ```
 
-* CORS testing
+## CORS testing
 
 - In cmd type -
 `$ curl -H "Origin: http://www.example.com"  -X GET --verbose   http://10.0.25.55:9000/carAdverts`
