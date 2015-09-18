@@ -53,4 +53,7 @@ http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.DynamoDBLo
     url - http://localhost:9000/carAdverts/<id>
 ```
 
-* Guide
+* CORS testing
+
+- In cmd type -
+`$ curl -H "Origin: http://www.example.com"  -X GET --verbose   http://10.0.25.55:9000/carAdverts`
