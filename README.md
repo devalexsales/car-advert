@@ -8,3 +8,41 @@
 
 http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.DynamoDBLocal.html
 
+
+
+## REST APIs
+
+-  View all car adverts
+```
+    method - GET
+    url - http://localhost:9000/carAdverts
+```
+
+- View car advert by id
+```
+    method - GET
+    url - http://localhost:9000/carAdverts/<id>
+```
+
+-  Create a new car advert
+```
+    method - POST
+    url - http://localhost:9000/carAdverts
+    content-type - application/x-www-form-urlencoded
+    param: guid=&title=test&fuel=gasoline&price=5607&isNew=true&mileage=-1&firstRegistration=
+```
+
+-  Update a car advert
+```
+    method - PUT
+    url - http://localhost:9000/carAdverts
+    content-type - application/x-www-form-urlencoded
+    param: guid=<id>&title=test&fuel=gasoline&price=5607&isNew=true&mileage=-1&firstRegistration=
+```
+
+-  Remove a car advert by id
+```
+    method - DELETE
+    url - http://localhost:9000/carAdverts/<id>
+```
+
