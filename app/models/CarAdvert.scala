@@ -17,8 +17,14 @@ object CarAdvert {
       map.get("fuel").get.getS,
       map.get("price").get.getN.toInt,
       if (map.get("new").get.getN.toInt == 1) true else false,
-      map.get("mileage").get.getN.toInt,
-      Some(new Date(map.get("firstRegistration").get.getN.toLong))
+      map.get("mileage") match {
+        case Some(item) => Some(item.getN.toInt)
+        case None => None
+      },
+      map.get("firstRegistration") match {
+        case Some(item) => Some(new Date(item.getN.toLong))
+        case None => None
+      }
     )
   }
 }
@@ -29,6 +35,6 @@ case class CarAdvert(
                       fuel: String,
                       price: Int,
                       isNew: Boolean,
-                      mileage: Int,
+                      mileage: Option[Int],
                       firstRegistration: Option[java.util.Date]
                       )

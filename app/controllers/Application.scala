@@ -31,7 +31,7 @@ class Application @Inject() (carAdvertDao: CarAdvertDao) extends Controller {
       "fuel" -> nonEmptyText,
       "price" -> number,
       "isNew" -> boolean,
-      "mileage" -> number,
+      "mileage" -> optional(number),
       "firstRegistration" -> optional(date(pattern = "MM-dd-yyyy"))
     )(CarAdvert.apply)(CarAdvert.unapply)
   )

@@ -11,19 +11,19 @@ import scala.util.{Failure, Success}
 class ApplicationITSpec extends Specification {
   val log = LoggerFactory.getLogger(this.getClass)
 
-  "Application" should {
-    "find all car adverts" in  {
-      val eventualResponse = WS.url("localhost:9000/carAdverts").get()
-      val result = for {
-        res <- eventualResponse
-      } yield res
-
-      result onComplete {
-        case Success(e) => log.info(e.toString)
-        case Failure(e) => //
-      }
-
-      success
-    }
-  }
+//  "Application" should {
+//    "find all car adverts" in  {
+//      val eventualResponse = WS.url("localhost:9000/carAdverts").get()
+//      val result = for {
+//        res <- eventualResponse
+//      } yield res
+//
+//      result onComplete {
+//        case Success(e) => log.info(e.toString)
+//        case Failure(e) => //
+//      }
+//
+//      success
+//    }
+//  }
 }

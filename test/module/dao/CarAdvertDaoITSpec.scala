@@ -16,6 +16,7 @@ class CarAdvertDaoITSpec  extends Specification {
 
     "a car advert integration tests" in {
       val id: String = UUID.randomUUID().toString
+      val id2: String = UUID.randomUUID().toString
 
       //create a car advert
       dao.save(CarAdvert(
@@ -23,8 +24,17 @@ class CarAdvertDaoITSpec  extends Specification {
         title = "test",
         fuel = "gasoline",
         price = 10,
+        isNew = false,
+        mileage = Some(100),
+        firstRegistration = Some(new java.util.Date())))
+
+      dao.save(CarAdvert(
+        id2,
+        title = "test",
+        fuel = "gasoline",
+        price = 10,
         isNew = true,
-        mileage = -1,
+        mileage = None,
         firstRegistration = None))
 
       //find by id
@@ -32,6 +42,13 @@ class CarAdvertDaoITSpec  extends Specification {
       log.info(carAdvert.toString)
       carAdvert.guid === id
       carAdvert.fuel === "gasoline"
+      carAdvert.isNew === false
+
+      var carAdvert2: CarAdvert = dao.findById(id2).get
+      log.info(carAdvert2.toString)
+      carAdvert2.guid === id2
+      carAdvert2.fuel === "gasoline"
+      carAdvert2.isNew === true
 
       //find all
       val carAdverts: List[CarAdvert] = dao.findAll()
@@ -44,6 +61,7 @@ class CarAdvertDaoITSpec  extends Specification {
       carAdvert = dao.findById(id).get
       carAdvert.fuel === "diesel"
 
+      //delete a car advert by id
       val isDeleted = dao.deleteBy(id, carAdvert.title)
       isDeleted === true
       dao.findById(id) match {
