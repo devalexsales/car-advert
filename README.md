@@ -23,8 +23,6 @@
 http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.DynamoDBLocal.html
 
 
-
-
 ## REST APIs
 
 -  View all car adverts ( optional sorting by any field specified by query parameter, default sorting - by **id**; )
@@ -46,7 +44,6 @@ firstRegistration
 ```
 
 
-
 - View car advert by id
 ```
     method - GET
@@ -58,11 +55,11 @@ firstRegistration
 ```
     method - POST
     url - http://localhost:9000/carAdverts
-    content-type - application/x-www-form-urlencoded
+    content-type - application/json
     param:     param: {
                    "guid":"",
                    "title":"alex",
-                   "fuel":"gasoline",
+                   "fuel":"<gasoline or diesel>",
                    "price":10,
                    "isNew":false,
                     ["firstRegistration": "2012-04-23T18:25:43.511Z", //JSON standard date or unix-timestamp
@@ -75,11 +72,11 @@ firstRegistration
 ```
     method - PUT
     url - http://localhost:9000/carAdverts
-    content-type - application/x-www-form-urlencoded
+    content-type - application/json
     param: {
         "guid":"",
         "title":"alex",
-        "fuel":"gasoline",
+        "fuel":"<gasoline or diesel>",
         "price":10,
         "isNew":false,
          ["firstRegistration": "2012-04-23T18:25:43.511Z", //JSON standard date or unix-timestamp

@@ -3,7 +3,7 @@ package controllers
 import java.util.UUID
 
 import com.google.inject.Inject
-import models.CarAdvert
+import models.{FuelType, CarAdvert}
 import module.dao.CarAdvertDao
 import play.api.data.Forms._
 import play.api.data._
@@ -37,8 +37,12 @@ class Application @Inject() (carAdvertDao: CarAdvertDao) extends Controller {
         BadRequest(Json.obj("status" ->"KO", "message" -> JsError.toFlatJson(errors)))
       },
       carAdvert => {
-        carAdvertDao.save(carAdvert.copy(guid = UUID.randomUUID().toString))
-        Ok(Json.obj("status" ->"OK", "message" -> ("CarAdvert '"+carAdvert.title+"' saved.") ))
+        if (FuelType.values.map(f => f.toString.toLowerCase()).contains(carAdvert.fuel)) {
+          carAdvertDao.save(carAdvert.copy(guid = UUID.randomUUID().toString))
+          Ok(Json.obj("status" ->"OK", "message" -> ("CarAdvert '"+carAdvert.title+"' saved.") ))
+        } else {
+          BadRequest(Json.obj("status" ->"KO", "message" -> s"Invalid fuel named ${carAdvert.fuel}"))
+        }
       }
     )
   }
@@ -50,7 +54,11 @@ class Application @Inject() (carAdvertDao: CarAdvertDao) extends Controller {
         BadRequest(Json.obj("status" ->"KO", "message" -> JsError.toFlatJson(errors)))
       },
       carAdvert => {
-        if (carAdvertDao.update(carAdvert)) Ok(s"${carAdvert.title} was updated.") else BadRequest("Unable to update carAdvert")
+        if (FuelType.values.map(f => f.toString.toLowerCase()).contains(carAdvert.fuel)) {
+          if (carAdvertDao.update(carAdvert)) Ok(s"${carAdvert.title} was updated.") else BadRequest("Unable to update carAdvert")
+        } else {
+          BadRequest(Json.obj("status" -> "KO", "message" -> s"Invalid fuel named ${carAdvert.fuel}"))
+        }
       }
     )
   }
@@ -70,7 +78,7 @@ class Application @Inject() (carAdvertDao: CarAdvertDao) extends Controller {
     val b = request.body.validate[Book]
     b.fold(
       errors => {
-        BadRequest(Json.obj("status" -> "OK", "message" -> JsError.toFlatJson(errors)))
+        BadRequest(Json.obj("status" -> "KO", "message" -> JsError.toFlatJson(errors)))
       },
       book => {
         addBook(book)
