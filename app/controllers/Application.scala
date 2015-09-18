@@ -19,38 +19,33 @@ class Application @Inject() (carAdvertDao: CarAdvertDao) extends Controller {
 
   def getCarAdvertById(id: String) = Action {
     carAdvertDao.findById(id) match {
-      case item => Ok(Json.toJson(item))
-      case None => NotFound
+      case Some(item) => Ok(Json.toJson(item))
+      case None => NotFound(Json.obj("status" ->"KO", "message" -> (s"${id} not found.")))
     }
   }
 
-  val carAdvertForm = Form(
-    mapping(
-      "guid" -> text,
-      "title" -> nonEmptyText,
-      "fuel" -> nonEmptyText,
-      "price" -> number,
-      "isNew" -> boolean,
-      "mileage" -> optional(number),
-      "firstRegistration" -> optional(date(pattern = "MM-dd-yyyy"))
-    )(CarAdvert.apply)(CarAdvert.unapply)
-  )
 
-  def addCarAdvert = Action { implicit  request =>
-    carAdvertForm.bindFromRequest.fold(
-      formWithErrors => BadRequest(formWithErrors.errors.toString),
+  def addCarAdvert = Action(BodyParsers.parse.json) { implicit  request =>
+    val carAdvertJson = request.body.validate[CarAdvert]
+    carAdvertJson.fold(
+      errors => {
+        BadRequest(Json.obj("status" ->"KO", "message" -> JsError.toFlatJson(errors)))
+      },
       carAdvert => {
         carAdvertDao.save(carAdvert.copy(guid = UUID.randomUUID().toString))
-        Ok("")
+        Ok(Json.obj("status" ->"OK", "message" -> ("CarAdvert '"+carAdvert.title+"' saved.") ))
       }
     )
   }
 
-  def updateCarAdvert = Action { implicit  request =>
-    carAdvertForm.bindFromRequest.fold(
-      formWithErrors => BadRequest(formWithErrors.errors.toString),
+  def updateCarAdvert = Action(BodyParsers.parse.json) { implicit  request =>
+    val carAdvertJson = request.body.validate[CarAdvert]
+    carAdvertJson.fold(
+      errors => {
+        BadRequest(Json.obj("status" ->"KO", "message" -> JsError.toFlatJson(errors)))
+      },
       carAdvert => {
-        if (carAdvertDao.update(carAdvert)) Ok("") else BadRequest("Unable to update carAdvert")
+        if (carAdvertDao.update(carAdvert)) Ok(s"${carAdvert.title} was updated.") else BadRequest("Unable to update carAdvert")
       }
     )
   }
@@ -58,7 +53,7 @@ class Application @Inject() (carAdvertDao: CarAdvertDao) extends Controller {
   def removeCarAdvert(id: String) = Action {
     carAdvertDao.findById(id) match {
       case Some(item) => if (carAdvertDao.deleteBy(item.guid, item.title)) Ok("") else BadRequest("Unable to delete")
-      case None => NotFound("")
+      case None => NotFound(Json.obj("status" ->"KO", "message" -> (s"${id} not found.")))
     }
   }
 

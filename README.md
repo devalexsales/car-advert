@@ -23,12 +23,14 @@ http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.DynamoDBLo
 ```
     method - GET
     url - http://localhost:9000/carAdverts
+    returns list of car adverts in JSON format
 ```
 
 - View car advert by id
 ```
     method - GET
     url - http://localhost:9000/carAdverts/<id>
+    returns a car advert in JSON format or  `{"status":"KO","message":"<info>"}`
 ```
 
 -  Create a new car advert
@@ -36,7 +38,16 @@ http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.DynamoDBLo
     method - POST
     url - http://localhost:9000/carAdverts
     content-type - application/x-www-form-urlencoded
-    param: guid=&title=test&fuel=gasoline&price=5607&isNew=true&[mileage=-1&firstRegistration=<MM-dd-yyyy>]
+    param:     param: {
+                   "guid":"",
+                   "title":"alex",
+                   "fuel":"gasoline",
+                   "price":10,
+                   "isNew":false,
+                    ["firstRegistration": "2012-04-23T18:25:43.511Z", //JSON standard date or unix-timestamp
+                    "mileage":10]
+                    }
+    returns `{"status":"<OK or KO>","message":"<info>"}`
 ```
 
 -  Update a car advert
@@ -44,13 +55,23 @@ http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.DynamoDBLo
     method - PUT
     url - http://localhost:9000/carAdverts
     content-type - application/x-www-form-urlencoded
-    param: guid=<id>&title=test&fuel=gasoline&price=5607&isNew=true&[mileage=-1&firstRegistration=<MM-dd-yyyy>]
+    param: {
+        "guid":"",
+        "title":"alex",
+        "fuel":"gasoline",
+        "price":10,
+        "isNew":false,
+         ["firstRegistration": "2012-04-23T18:25:43.511Z", //JSON standard date or unix-timestamp
+         "mileage":10]
+         }
+    returns `{"status":"<OK or KO>","message":"<info>"}`
 ```
 
 -  Remove a car advert by id
 ```
     method - DELETE
     url - http://localhost:9000/carAdverts/<id>
+    returns `{"status":"<OK or KO>","message":"<info>"}`
 ```
 
 * CORS testing

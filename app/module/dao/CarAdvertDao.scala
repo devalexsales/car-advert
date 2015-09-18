@@ -1,8 +1,11 @@
 package module.dao
 
+import java.util.Date
+
 import awscala.dynamodbv2._
 import com.google.inject.ImplementedBy
 import models.CarAdvert
+import org.joda.time.DateTime
 
 
 @ImplementedBy(classOf[CarAdvertDaoImpl])
@@ -108,7 +111,13 @@ class CarAdvertDaoImpl extends CarAdvertDao {
     }
   }
 
+
   private def saveOrUpdate(carAdvert: CarAdvert, table: Table): Unit = {
+    val firstRegistration = carAdvert.firstRegistration match {
+      case Some(item) => new DateTime(item).withTimeAtStartOfDay().getMillis // without time.
+      case None => None
+    }
+
     table.put(
       hashPK = carAdvert.guid,
       rangePK = carAdvert.title,
@@ -116,7 +125,7 @@ class CarAdvertDaoImpl extends CarAdvertDao {
       "price" -> carAdvert.price,
       "new" -> (if (carAdvert.isNew) 1 else 0),
       "mileage" -> carAdvert.mileage,
-      "firstRegistration" -> (if (carAdvert.isNew) -1 else carAdvert.firstRegistration.get.getTime)
+      "firstRegistration" -> firstRegistration
     )
   }
 
