@@ -36,7 +36,7 @@ http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.DynamoDBLo
     method - POST
     url - http://localhost:9000/carAdverts
     content-type - application/x-www-form-urlencoded
-    param: guid=&title=test&fuel=gasoline&price=5607&isNew=true&mileage=-1&firstRegistration=
+    param: guid=&title=test&fuel=gasoline&price=5607&isNew=true&[mileage=-1&firstRegistration=<MM-dd-yyyy>]
 ```
 
 -  Update a car advert
@@ -44,7 +44,7 @@ http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.DynamoDBLo
     method - PUT
     url - http://localhost:9000/carAdverts
     content-type - application/x-www-form-urlencoded
-    param: guid=<id>&title=test&fuel=gasoline&price=5607&isNew=true&mileage=-1&firstRegistration=
+    param: guid=<id>&title=test&fuel=gasoline&price=5607&isNew=true&[mileage=-1&firstRegistration=<MM-dd-yyyy>]
 ```
 
 -  Remove a car advert by id
@@ -53,3 +53,4 @@ http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.DynamoDBLo
     url - http://localhost:9000/carAdverts/<id>
 ```
 
+* Guide
