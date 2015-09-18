@@ -19,12 +19,25 @@ http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.DynamoDBLo
 
 ## REST APIs
 
--  View all car adverts
+-  View all car adverts ( optional sorting by any field specified by query parameter, default sorting - by **id**; )
 ```
     method - GET
-    url - http://localhost:9000/carAdverts
+    url - http://localhost:9000/carAdverts[?sort='<fieldnames>']
     returns list of car adverts in JSON format
 ```
+* Field names
+```
+guid
+title
+fuel
+price
+isNew
+mileage
+firstRegistration
+
+```
+
+
 
 - View car advert by id
 ```

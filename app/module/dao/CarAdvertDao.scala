@@ -4,7 +4,7 @@ import java.util.Date
 
 import awscala.dynamodbv2._
 import com.google.inject.ImplementedBy
-import models.CarAdvert
+import models.{ToEnhancedDynamoOps, CarAdvert}
 import org.joda.time.DateTime
 
 
@@ -15,6 +15,8 @@ trait CarAdvertDao {
   def update(carAdvert: CarAdvert): Boolean
 
   def findAll(): List[CarAdvert]
+
+  def findAll(sortField: String): List[CarAdvert]
 
   def findById(id: String): Option[CarAdvert]
 
@@ -82,6 +84,37 @@ class CarAdvertDaoImpl extends CarAdvertDao {
       case None => {
         createTable()
         findAll()
+      }
+    }
+  }
+
+
+
+
+  override def findAll(sortField: String): List[CarAdvert] = {
+    dynamoDb.table(CAR_ADVERTS) match {
+      case Some(table) => {
+        implicit object anyOrder extends Ordering[Any] {
+          def compare(a: Any, b: Any): Int = {
+            if (a.isInstanceOf[String]) {
+              a.asInstanceOf[String] compare b.asInstanceOf[String]
+            } else if (a.isInstanceOf[Boolean]) {
+              if (b.asInstanceOf[Boolean]) 1 else -1
+            } else if (a.isInstanceOf[Long]) {
+              a.asInstanceOf[Long] compare b.asInstanceOf[Long]
+            } else {
+              a.asInstanceOf[Int] compare b.asInstanceOf[Int]
+            }
+          }
+        }
+        table.scan(Seq("guid" -> cond.ne("a"))) match {
+          case items => items.map(CarAdvert.toObject(_)).toList.sortBy(CarAdvert.getField(_, sortField))
+          case Nil => List()
+        }
+      }
+      case None => {
+        createTable()
+        findAll(sortField)
       }
     }
   }

@@ -13,8 +13,13 @@ import models.Book._
 
 class Application @Inject() (carAdvertDao: CarAdvertDao) extends Controller {
 
-  def listCarAdverts = Action {
-    Ok(Json.toJson(carAdvertDao.findAll()))
+  def listCarAdverts = Action { implicit request =>
+    val sortField = request.queryString.map { case (k,v) => k -> v.mkString }.get("sort") match {
+      case None => "guid"
+      case Some(str) => str
+    }
+
+    Ok(Json.toJson(carAdvertDao.findAll(sortField)))
   }
 
   def getCarAdvertById(id: String) = Action {
