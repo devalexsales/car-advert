@@ -16,7 +16,7 @@ class Application @Inject() (carAdvertDao: CarAdvertDao) extends Controller {
       case Some(str) => str
     }
 
-    Ok(Json.toJson(carAdvertDao.findAll(sortField)))
+    Ok(Json.prettyPrint(Json.toJson(carAdvertDao.findAll(sortField))))
   }
 
   def getCarAdvertById(id: String) = Action {
