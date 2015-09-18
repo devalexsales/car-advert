@@ -10,6 +10,86 @@ object CarAdvert {
   implicit val carAdvertWrites = Json.writes[CarAdvert]
   implicit val carAdvertReads = Json.reads[CarAdvert]
 
+  val guidOrdering = new Ordering[CarAdvert] {
+    override def compare(x: CarAdvert, y: CarAdvert): Int = { x.guid compare y.guid }
+  }
+
+  val titleOrdering = new Ordering[CarAdvert] {
+    override def compare(x: CarAdvert, y: CarAdvert): Int = { x.title compare y.title }
+  }
+
+  val fuelOrdering = new Ordering[CarAdvert] {
+    override def compare(x: CarAdvert, y: CarAdvert): Int = { x.fuel compare y.fuel }
+  }
+
+  val priceOrdering = new Ordering[CarAdvert] {
+    override def compare(x: CarAdvert, y: CarAdvert): Int = { x.price compare y.price }
+  }
+
+  val newOrdering = new Ordering[CarAdvert] {
+    override def compare(x: CarAdvert, y: CarAdvert): Int = {
+      x.isNew compare y.isNew
+    }
+  }
+
+    val mileageOrdering = new Ordering[CarAdvert] {
+      override def compare(x: CarAdvert, y: CarAdvert): Int = {
+        val a = x.mileage match {
+          case None => -1
+          case Some(item) => item
+        }
+        val b = y.mileage match {
+          case None => -1
+          case Some(item) => item
+        }
+
+        a compare b
+      }
+
+    }
+
+    val firstRegistrationOrdering = new Ordering[CarAdvert] {
+      override def compare(x: CarAdvert, y: CarAdvert): Int = {
+        val a = x.firstRegistration match {
+          case None => -1
+          case Some(item) => item.getTime
+        }
+        val b = y.firstRegistration match {
+          case None => -1
+          case Some(item) => item.getTime
+        }
+
+        a compare b
+      }
+    }
+
+
+    def getField(carAdvert: CarAdvert, sortField: String) = sortField match {
+      case "fuel" => carAdvert.fuel
+      case "isNew" => carAdvert.isNew
+      case "mileage" => carAdvert.mileage match {
+        case None => -1
+        case Some(item) => item
+      }
+      case "price" => carAdvert.price
+      case "title" => carAdvert.title
+      case "firstRegistration" => carAdvert.firstRegistration match {
+        case None => -1
+        case Some(item) => item.getTime
+      }
+      case _ => carAdvert.guid
+    }
+
+    def getOrdering(sortField: String) = sortField match {
+      case "fuel" => fuelOrdering
+      case "isNew" => newOrdering
+      case "mileage" => mileageOrdering
+      case "price" => priceOrdering
+      case "title" => titleOrdering
+      case "firstRegistration" => firstRegistrationOrdering
+      case _ => guidOrdering
+    }
+
   def toObject(item: Item): CarAdvert = {
     val map = ToEnhancedDynamoOps.toEnhancedItem(item).attributesMap
     CarAdvert(
@@ -27,23 +107,6 @@ object CarAdvert {
         case None => None
       }
     )
-  }
-
-
-  def getField(carAdvert: CarAdvert, sortField: String) = sortField match {
-    case "fuel" => carAdvert.fuel
-    case "isNew" => carAdvert.isNew
-    case "mileage" => carAdvert.mileage match {
-      case None => -1
-      case Some(item) => item
-    }
-    case "price" => carAdvert.price
-    case "title" => carAdvert.title
-    case "firstRegistration" => carAdvert.firstRegistration match {
-      case None => -1
-      case Some(item) => item.getTime
-    }
-    case _ => carAdvert.guid
   }
 }
 

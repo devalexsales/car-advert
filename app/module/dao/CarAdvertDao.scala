@@ -3,6 +3,7 @@ package module.dao
 import awscala.dynamodbv2._
 import com.google.inject.ImplementedBy
 import models.CarAdvert
+import models.CarAdvert
 import org.joda.time.DateTime
 
 
@@ -92,21 +93,8 @@ class CarAdvertDaoImpl extends CarAdvertDao {
   override def findAll(sortField: String): List[CarAdvert] = {
     dynamoDb.table(CAR_ADVERTS) match {
       case Some(table) => {
-        implicit object anyOrder extends Ordering[Any] {
-          def compare(a: Any, b: Any): Int = {
-            if (a.isInstanceOf[String]) {
-              a.asInstanceOf[String] compare b.asInstanceOf[String]
-            } else if (a.isInstanceOf[Boolean]) {
-              if (b.asInstanceOf[Boolean]) 1 else -1
-            } else if (a.isInstanceOf[Long]) {
-              a.asInstanceOf[Long] compare b.asInstanceOf[Long]
-            } else {
-              a.asInstanceOf[Int] compare b.asInstanceOf[Int]
-            }
-          }
-        }
         table.scan(Seq("guid" -> cond.ne("a"))) match {
-          case items => items.map(CarAdvert.toObject(_)).toList.sortBy(CarAdvert.getField(_, sortField))
+          case items => items.map(CarAdvert.toObject(_)).toList.sorted(CarAdvert.getOrdering(sortField))
           case Nil => List()
         }
       }
