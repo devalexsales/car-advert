@@ -1,10 +1,8 @@
 package module.dao
 
-import java.util.Date
-
 import awscala.dynamodbv2._
 import com.google.inject.ImplementedBy
-import models.{ToEnhancedDynamoOps, CarAdvert}
+import models.CarAdvert
 import org.joda.time.DateTime
 
 

@@ -5,11 +5,8 @@ import java.util.UUID
 import com.google.inject.Inject
 import models.{FuelType, CarAdvert}
 import module.dao.CarAdvertDao
-import play.api.data.Forms._
-import play.api.data._
 import play.api.libs.json._
 import play.api.mvc._
-import models.Book._
 
 class Application @Inject() (carAdvertDao: CarAdvertDao) extends Controller {
 
@@ -70,20 +67,4 @@ class Application @Inject() (carAdvertDao: CarAdvertDao) extends Controller {
     }
   }
 
-  def listBooks = Action {
-    Ok(Json.toJson(books))
-  }
-
-  def saveBook = Action(BodyParsers.parse.json) { request =>
-    val b = request.body.validate[Book]
-    b.fold(
-      errors => {
-        BadRequest(Json.obj("status" -> "KO", "message" -> JsError.toFlatJson(errors)))
-      },
-      book => {
-        addBook(book)
-        Ok(Json.obj("status" -> "OK"))
-      }
-    )
-  }
 }
