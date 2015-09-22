@@ -32,11 +32,12 @@ class Application @Inject() (carAdvertDao: CarAdvertDao) extends Controller {
         BadRequest(Json.obj("status" ->"KO", "message" -> JsError.toFlatJson(errors)))
       },
       carAdvert => {
-        if (FuelType.values.map(f => f.toString.toLowerCase()).contains(carAdvert.fuel)) {
-          carAdvertDao.save(carAdvert.copy(guid = UUID.randomUUID().toString))
-          Ok(Json.obj("status" ->"OK", "message" -> ("CarAdvert '"+carAdvert.title+"' saved.") ))
-        } else {
-          BadRequest(Json.obj("status" ->"KO", "message" -> s"Invalid fuel named ${carAdvert.fuel}"))
+        FuelType.getFuelType(carAdvert.fuel) match {
+          case None =>  BadRequest(Json.obj("status" ->"KO", "message" -> s"Invalid fuel named ${carAdvert.fuel}"))
+          case Some(fuelType) =>  {
+            carAdvertDao.save(carAdvert.copy(guid = UUID.randomUUID().toString))
+            Ok(Json.obj("status" ->"OK", "message" -> ("CarAdvert '"+carAdvert.title+"' saved.") ))
+          }
         }
       }
     )
@@ -49,10 +50,9 @@ class Application @Inject() (carAdvertDao: CarAdvertDao) extends Controller {
         BadRequest(Json.obj("status" ->"KO", "message" -> JsError.toFlatJson(errors)))
       },
       carAdvert => {
-        if (FuelType.values.map(f => f.toString.toLowerCase()).contains(carAdvert.fuel)) {
-          if (carAdvertDao.update(carAdvert)) Ok(s"${carAdvert.title} was updated.") else BadRequest("Unable to update carAdvert")
-        } else {
-          BadRequest(Json.obj("status" -> "KO", "message" -> s"Invalid fuel named ${carAdvert.fuel}"))
+        FuelType.getFuelType(carAdvert.fuel) match {
+          case None => BadRequest(Json.obj("status" -> "KO", "message" -> s"Invalid fuel named ${carAdvert.fuel}"))
+          case Some(fuelType) =>  if (carAdvertDao.update(carAdvert)) Ok(s"${carAdvert.title} was updated.") else BadRequest("Unable to update carAdvert")
         }
       }
     )
