@@ -13,11 +13,7 @@ class Application @Inject() (carAdvertDao: CarAdvertDao) extends Controller {
   val log = LoggerFactory.getLogger(this.getClass)
 
   def listCarAdverts = Action { implicit request =>
-    val sortField = request.queryString.map { case (k,v) => k -> v.mkString }.get("sort") match {
-      case None => "guid"
-      case Some(str) => str
-    }
-
+    val sortField = request.queryString.map { case (k,v) => k -> v.mkString }.get("sort").getOrElse("guid")
     Ok(Json.prettyPrint(Json.toJson(carAdvertDao.findAll(sortField))))
   }
 

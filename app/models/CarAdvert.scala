@@ -3,6 +3,7 @@ package models
 import java.util.Date
 
 import awscala.dynamodbv2._
+import models.CarAdvertField.CarAdvertField
 import play.api.libs.json.Json
 
 object CarAdvert {
@@ -58,26 +59,26 @@ object CarAdvert {
     }
 
 
-    def getField(carAdvert: CarAdvert, sortField: String) = sortField match {
-      case "fuel" => carAdvert.fuel
-      case "isNew" => carAdvert.isNew
-      case "mileage" => carAdvert.mileage.getOrElse(-1)
-      case "price" => carAdvert.price
-      case "title" => carAdvert.title
-      case "firstRegistration" => carAdvert.firstRegistration match {
+    def getField(carAdvert: CarAdvert, sortField: CarAdvertField) = sortField match {
+      case CarAdvertField.Fuel => carAdvert.fuel
+      case CarAdvertField.IsNew => carAdvert.isNew
+      case CarAdvertField.Mileage => carAdvert.mileage.getOrElse(-1)
+      case CarAdvertField.Price => carAdvert.price
+      case CarAdvertField.Title => carAdvert.title
+      case CarAdvertField.FirstRegistration => carAdvert.firstRegistration match {
         case None => -1
         case Some(item) => item.getTime
       }
       case _ => carAdvert.guid
     }
 
-    def getOrdering(sortField: String) = sortField match {
-      case "fuel" => fuelOrdering
-      case "isNew" => newOrdering
-      case "mileage" => mileageOrdering
-      case "price" => priceOrdering
-      case "title" => titleOrdering
-      case "firstRegistration" => firstRegistrationOrdering
+    def getOrdering(sortField: CarAdvertField) = sortField match {
+      case CarAdvertField.Fuel => fuelOrdering
+      case CarAdvertField.IsNew => newOrdering
+      case CarAdvertField.Mileage => mileageOrdering
+      case CarAdvertField.Price => priceOrdering
+      case CarAdvertField.Title => titleOrdering
+      case CarAdvertField.FirstRegistration => firstRegistrationOrdering
       case _ => guidOrdering
     }
 
@@ -110,3 +111,33 @@ case class CarAdvert(
                       mileage: Option[Int],
                       firstRegistration: Option[java.util.Date]
                       )
+
+object CarAdvertField {
+
+  sealed trait CarAdvertField
+
+  case object Guid extends CarAdvertField
+
+  case object Title extends CarAdvertField
+
+  case object Fuel extends CarAdvertField
+
+  case object Price extends CarAdvertField
+
+  case object IsNew extends CarAdvertField
+
+  case object Mileage extends CarAdvertField
+
+  case object FirstRegistration extends CarAdvertField
+
+  def getCarAdvertField(s: String): Option[CarAdvertField] = s match {
+    case "guid" => Some(Guid)
+    case "title" => Some(Title)
+    case "fuel" => Some(Fuel)
+    case "price" => Some(Price)
+    case "isNew" => Some(IsNew)
+    case "mileage" => Some(Mileage)
+    case "firstRegistration" => Some(FirstRegistration)
+    case _ => None
+  }
+}
