@@ -5,10 +5,12 @@ import java.util.UUID
 import com.google.inject.Inject
 import models.{FuelType, CarAdvert}
 import module.dao.CarAdvertDao
+import org.slf4j.LoggerFactory
 import play.api.libs.json._
 import play.api.mvc._
 
 class Application @Inject() (carAdvertDao: CarAdvertDao) extends Controller {
+  val log = LoggerFactory.getLogger(this.getClass)
 
   def listCarAdverts = Action { implicit request =>
     val sortField = request.queryString.map { case (k,v) => k -> v.mkString }.get("sort") match {

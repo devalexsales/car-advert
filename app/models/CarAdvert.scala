@@ -34,14 +34,8 @@ object CarAdvert {
 
     val mileageOrdering = new Ordering[CarAdvert] {
       override def compare(x: CarAdvert, y: CarAdvert): Int = {
-        val a = x.mileage match {
-          case None => -1
-          case Some(item) => item
-        }
-        val b = y.mileage match {
-          case None => -1
-          case Some(item) => item
-        }
+        val a = x.mileage.getOrElse(-1)
+        val b = y.mileage getOrElse(-1)
 
         a compare b
       }
@@ -67,10 +61,7 @@ object CarAdvert {
     def getField(carAdvert: CarAdvert, sortField: String) = sortField match {
       case "fuel" => carAdvert.fuel
       case "isNew" => carAdvert.isNew
-      case "mileage" => carAdvert.mileage match {
-        case None => -1
-        case Some(item) => item
-      }
+      case "mileage" => carAdvert.mileage.getOrElse(-1)
       case "price" => carAdvert.price
       case "title" => carAdvert.title
       case "firstRegistration" => carAdvert.firstRegistration match {

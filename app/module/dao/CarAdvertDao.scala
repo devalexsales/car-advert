@@ -29,28 +29,29 @@ class CarAdvertDaoImpl extends CarAdvertDao {
   val CAR_ADVERTS: String = "car-adverts"
   implicit val dynamoDb: DynamoDB = DynamoDB.local()
 
+  //init
   createTableIfMissing()
 
   def createTableIfMissing() = {
-    dynamoDb.table(CAR_ADVERTS) match {
-      case None => {
-        val tableMeta: TableMeta = dynamoDb.createTable(
-          name = CAR_ADVERTS, hashPK = "guid" -> AttributeType.String, rangePK = "title" -> AttributeType.String,
-          otherAttributes = Seq(),
-          indexes = Seq(LocalSecondaryIndex(
-            name = "car-adverts-index",
-            keySchema = Seq(
-              KeySchema("guid", KeyType.Hash),
-              KeySchema("title", KeyType.Range)
-            ),
-            projection = Projection(ProjectionType.Include, Seq("title"))
-          ))
-        )
-      }
-    }
+    dynamoDb.table(CAR_ADVERTS).getOrElse({
+      val tableMeta: TableMeta = dynamoDb.createTable(
+        name = CAR_ADVERTS, hashPK = "guid" -> AttributeType.String, rangePK = "title" -> AttributeType.String,
+        otherAttributes = Seq(),
+        indexes = Seq(LocalSecondaryIndex(
+          name = "car-adverts-index",
+          keySchema = Seq(
+            KeySchema("guid", KeyType.Hash),
+            KeySchema("title", KeyType.Range)
+          ),
+          projection = Projection(ProjectionType.Include, Seq("title"))
+        ))
+      )
+    })
   }
 
-  override def save(carAdvert: CarAdvert): Unit = saveOrUpdate(carAdvert)
+  override def save(carAdvert: CarAdvert): Unit = {
+    saveOrUpdate(carAdvert)
+  }
 
   override def findById(id: String): Option[CarAdvert] = dynamoDb.table(CAR_ADVERTS).get.query(Seq("guid" -> cond.eq(id))) match {
     case Nil => None
@@ -89,14 +90,13 @@ class CarAdvertDaoImpl extends CarAdvertDao {
       case Some(item) => new DateTime(item).withTimeAtStartOfDay().getMillis // without time.
       case None => None
     }
-
     dynamoDb.table(CAR_ADVERTS).get.put(
       hashPK = carAdvert.guid,
       rangePK = carAdvert.title,
       "fuel" -> carAdvert.fuel,
       "price" -> carAdvert.price,
       "new" -> (if (carAdvert.isNew) 1 else 0),
-      "mileage" -> carAdvert.mileage,
+      "mileage" -> carAdvert.mileage.getOrElse(-1),
       "firstRegistration" -> firstRegistration
     )
   }
